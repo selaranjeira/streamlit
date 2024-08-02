@@ -1,6 +1,11 @@
-# .gitignore
+# Ignorar arquivos de cache Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Ignorar arquivos do sistema
 .DS_Store
+
+# Ignorar arquivos de dados grandes (exemplo)
+data/large_dataset.csv
