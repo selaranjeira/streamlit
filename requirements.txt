@@ -85,7 +85,6 @@ jupyterlab_widgets==3.0.11
 kiwisolver==1.2.0
 lab==6.0
 llvmlite==0.34.0
-lxml==4.5.1
 markdown-it-py==2.2.0
 MarkupSafe==2.1.2
 matplotlib==3.5.3
