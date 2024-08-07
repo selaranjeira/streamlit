@@ -1,8 +1,105 @@
 import plotly.graph_objects as go
-import streamlit as st
+import pandas as pd
+
+def criar_grafico_barras_verticais(valores_corrente, valores_anterior, titulo):
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(
+        x=['Mês Corrente', 'Mês Anterior'],
+        y=[valores_corrente, valores_anterior],
+        marker=dict(color=['#212b2c', '#536c6f']),
+        text=[valores_corrente, valores_anterior],
+        textposition='auto'
+    ))
+
+    fig.update_layout(
+        title=titulo,
+        xaxis_title='Mês',
+        yaxis_title='Valores',
+        plot_bgcolor='lightgrey',
+        paper_bgcolor='lightgrey',
+        font=dict(color='black'),
+        title_font=dict(color='black'),
+        xaxis=dict(
+            title_font=dict(color='black'),
+            tickfont=dict(color='black')
+        ),
+        yaxis=dict(
+            title_font=dict(color='black'),
+            tickfont=dict(color='black')
+        ),
+        legend=dict(font=dict(color='black')),
+        autosize=True,
+        margin=dict(l=100, r=20, t=50, b=50)
+    )
+
+    return fig
+
+def calcular_calorias_mensais(df):
+    return df.groupby(df['data'].dt.to_period('M'))['calorias'].sum()
+
+def calcular_km_mensais(df):
+    return df.groupby(df['data'].dt.to_period('M'))['quilometragem'].sum()
+
+def criar_graficos_mensais_comparativos(metas_mensais, tipo='calorias', filtro_mes=None):
+    meses = metas_mensais.index.tolist()
+    
+    if filtro_mes and filtro_mes != 'Todos os Meses':
+        mes_corrente = pd.Period(filtro_mes)
+        mes_anterior = meses[meses.index(mes_corrente) - 1] if meses.index(mes_corrente) > 0 else mes_corrente
+        meses = [mes_corrente]
+
+    figs = []
+    for mes_corrente in meses:
+        mes_anterior = meses[meses.index(mes_corrente) - 1] if meses.index(mes_corrente) > 0 else mes_corrente
+
+        valor_corrente = metas_mensais[mes_corrente] if mes_corrente in metas_mensais.index else 0
+        valor_anterior = metas_mensais[mes_anterior] if mes_anterior in metas_mensais.index else 0
+
+        titulo = f'Meta {tipo.capitalize()} Mensal ({mes_corrente})'
+        fig = criar_grafico_barras_verticais(valor_corrente, valor_anterior, titulo)
+        figs.append(fig)
+    
+    return figs
+
+def criar_grafico_barra_horizontal(data, title):
+    fig = go.Figure(go.Bar(
+        x=data.values,
+        y=data.index,
+        orientation='h',
+        marker=dict(
+            color='#212b2c',
+            line=dict(color='black', width=0.9)
+        )
+    ))
+
+    fig.update_layout(
+        title=title,
+        xaxis_title='Média',
+        yaxis_title='Dia da Semana',
+        plot_bgcolor='lightgrey',
+        paper_bgcolor='lightgrey',
+        font=dict(color='black'),
+        title_font=dict(color='black'),
+        xaxis=dict(
+            title_font=dict(color='black'),
+            tickfont=dict(color='black')
+        ),
+        yaxis=dict(
+            title_font=dict(color='black'),
+            tickfont=dict(color='black')
+        ),
+        legend=dict(font=dict(color='black')),
+        margin=dict(l=100, r=20, t=50, b=50)
+    )
+
+    return fig
 
 def criar_grafico(df, media_calorias_com_zeros, media_calorias_sem_zeros):
     fig = go.Figure()
+
+    # Definir as cores dos pontos com base nas condições fornecidas
+    cores_pontos = ['green' if calorias > media_calorias_sem_zeros else '#212b2c' if calorias > 0 else 'red' for calorias in df['calorias']]
 
     fig.add_trace(go.Scatter(
         x=df['data'],
@@ -10,7 +107,7 @@ def criar_grafico(df, media_calorias_com_zeros, media_calorias_sem_zeros):
         mode='lines+markers',
         line=dict(color='black'),
         marker=dict(
-            color=['green' if calorias > media_calorias_sem_zeros else 'red' for calorias in df['calorias']],
+            color=cores_pontos,
             size=10
         ),
         text=df.apply(lambda row: f"Calorias: {row['calorias']}<br>Quilometragem: {row['quilometragem']}", axis=1),
@@ -43,46 +140,24 @@ def criar_grafico(df, media_calorias_com_zeros, media_calorias_sem_zeros):
     )
 
     fig.update_layout(
-        title='Calorias por Dia com Médias',
+        title='Evolução Diária de Calorias',
         xaxis_title='Data',
         yaxis_title='Calorias',
-        plot_bgcolor='darkgrey',
-        paper_bgcolor='darkgrey',
+        plot_bgcolor='lightgrey',
+        paper_bgcolor='lightgrey',
         font=dict(color='black'),
-        autosize=True,
-        margin=dict(l=100, r=20, t=50, b=150)
-    )
-
-    return fig
-
-
-def criar_grafico_barra_horizontal(data, title):
-    fig = go.Figure(go.Bar(
-        x=data.values,
-        y=data.index,
-        orientation='h',
-        marker=dict(
-            color='green',  # Cor das barras
-            line=dict(color='black', width=0.9)  # Cor e largura da borda das barras
-        )
-    ))
-
-    fig.update_layout(
-        title=title,
-        xaxis_title='Média',
-        yaxis_title='Dia da Semana',
-        plot_bgcolor='darkgray',
-        paper_bgcolor='darkgray',
-        font=dict(color='black'),
+        title_font=dict(color='black'),
         xaxis=dict(
-            title=dict(font=dict(size=14)),  # Tamanho da fonte do título do eixo x
-            tickfont=dict(size=10)  # Tamanho da fonte dos rótulos do eixo x
+            title_font=dict(color='black'),
+            tickfont=dict(color='black')
         ),
         yaxis=dict(
-            title=dict(font=dict(size=14)),  # Tamanho da fonte do título do eixo y
-            tickfont=dict(size=12)  # Tamanho da fonte dos rótulos do eixo y
+            title_font=dict(color='black'),
+            tickfont=dict(color='black')
         ),
-        margin=dict(l=100, r=20, t=50, b=50)  # Ajustar as margens
+        legend=dict(font=dict(color='black')),
+        autosize=True,
+        margin=dict(l=100, r=20, t=50, b=150)
     )
 
     return fig
