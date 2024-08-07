@@ -2,7 +2,7 @@ import pandas as pd
 import sqlite3
 
 def carregar_dados():
-    conn = sqlite3.connect('../../data/runningDB.sqlite3')
+    conn = sqlite3.connect('data/runningDB.sqlite3')
     df = pd.read_sql_query("SELECT * FROM running_data", conn)
     conn.close()
     
