@@ -83,7 +83,7 @@ jupyterlab-server==1.2.0
 jupyterlab-sql==0.3.3
 jupyterlab_widgets==3.0.11
 kiwisolver==1.2.0
-lab==6.0
+git+https://github.com/gatagat/lap@new-packaging
 llvmlite==0.34.0
 markdown-it-py==2.2.0
 MarkupSafe==2.1.2
