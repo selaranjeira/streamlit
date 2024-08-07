@@ -6,3 +6,4 @@ pip
 plotly                   
 python-dateutil          
 streamlit
+sqlite3
