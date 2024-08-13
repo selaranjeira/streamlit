@@ -1,5 +1,4 @@
 import plotly.graph_objects as go
-import pandas as pd
 
 def criar_grafico_barras_verticais(valores_corrente, valores_anterior, titulo):
     fig = go.Figure()
@@ -35,34 +34,47 @@ def criar_grafico_barras_verticais(valores_corrente, valores_anterior, titulo):
 
     return fig
 
-def calcular_calorias_mensais(df):
-    return df.groupby(df['data'].dt.to_period('M'))['calorias'].sum()
+# def criar_grafico_barra_horizontal(data, title):
+#     fig = go.Figure(go.Bar(
+#         x=data.values,
+#         y=data.index,
+#         orientation='h',
+#         marker=dict(
+#             color='#212b2c',
+#             line=dict(color='black', width=0.9)
+#         )
+#     ))
 
-def calcular_km_mensais(df):
-    return df.groupby(df['data'].dt.to_period('M'))['quilometragem'].sum()
+#     fig.update_layout(
+#         title=title,
+#         xaxis_title='Média',
+#         yaxis_title='Dia da Semana',
+#         plot_bgcolor='lightgrey',
+#         paper_bgcolor='lightgrey',
+#         font=dict(color='black'),
+#         title_font=dict(color='black'),
+#         xaxis=dict(
+#             title_font=dict(color='black'),
+#             tickfont=dict(color='black')
+#         ),
+#         yaxis=dict(
+#             title_font=dict(color='black'),
+#             tickfont=dict(color='black')
+#         ),
+#         legend=dict(font=dict(color='black')),
+#         margin=dict(l=100, r=20, t=50, b=50)
+#     )
 
-def criar_graficos_mensais_comparativos(metas_mensais, tipo='calorias', filtro_mes=None):
-    meses = metas_mensais.index.tolist()
-    
-    if filtro_mes and filtro_mes != 'Todos os Meses':
-        mes_corrente = pd.Period(filtro_mes)
-        mes_anterior = meses[meses.index(mes_corrente) - 1] if meses.index(mes_corrente) > 0 else mes_corrente
-        meses = [mes_corrente]
+#     return fig
 
-    figs = []
-    for mes_corrente in meses:
-        mes_anterior = meses[meses.index(mes_corrente) - 1] if meses.index(mes_corrente) > 0 else mes_corrente
-
-        valor_corrente = metas_mensais[mes_corrente] if mes_corrente in metas_mensais.index else 0
-        valor_anterior = metas_mensais[mes_anterior] if mes_anterior in metas_mensais.index else 0
-
-        titulo = f'Meta {tipo.capitalize()} Mensal ({mes_corrente})'
-        fig = criar_grafico_barras_verticais(valor_corrente, valor_anterior, titulo)
-        figs.append(fig)
-    
-    return figs
 
 def criar_grafico_barra_horizontal(data, title):
+    # Mapeamento dos valores de 0 a 6 para os nomes dos dias da semana
+    dias_semana = {0: 'Segunda-feira', 1: 'Terça-feira', 2: 'Quarta-feira', 3: 'Quinta-feira', 4: 'Sexta-feira', 5: 'Sábado', 6: 'Domingo'}
+    
+    # Substituindo os valores pelos nomes dos dias
+    data.index = data.index.map(dias_semana)
+
     fig = go.Figure(go.Bar(
         x=data.values,
         y=data.index,
@@ -94,6 +106,14 @@ def criar_grafico_barra_horizontal(data, title):
     )
 
     return fig
+
+
+def calcular_calorias_mensais(df):
+    return df.groupby(df['data'].dt.to_period('M'))['calorias'].sum()
+
+def calcular_km_mensais(df):
+    return df.groupby(df['data'].dt.to_period('M'))['quilometragem'].sum()
+
 
 def criar_grafico(df, media_calorias_com_zeros, media_calorias_sem_zeros):
     fig = go.Figure()
