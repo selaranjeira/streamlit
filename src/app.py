@@ -20,22 +20,22 @@ def main():
         st.image(logo_teste)
 
     # Filtros
-    meses = df['data'].dt.strftime('%Y-%m').unique()
-    meses = sorted(list(meses))
-    meses = ['Todos os Meses'] + meses
-    filtro_mes = st.sidebar.selectbox("Selecione o Mês", meses)
+    # meses = df['data'].dt.strftime('%Y-%m').unique()
+    # meses = sorted(list(meses))
+    # meses = ['Todos os Meses'] + meses
+    # filtro_mes = st.sidebar.selectbox("Selecione o Mês", meses)
 
-    semanas = df['data'].dt.strftime('%U-%Y').unique()
-    filtro_semana = st.sidebar.selectbox("Selecione a Semana", ['Todas as Semanas'] + list(semanas))
+    # semanas = df['data'].dt.strftime('%U-%Y').unique()
+    # filtro_semana = st.sidebar.selectbox("Selecione a Semana", ['Todas as Semanas'] + list(semanas))
 
     visao = st.sidebar.radio("Selecione a Visão", ["Visão KM", "Visão Calorias"])
 
     # Filtragem de dados
-    if filtro_mes != 'Todos os Meses':
-        df = df[df['data'].dt.strftime('%Y-%m') == filtro_mes]
+    # if filtro_mes != 'Todos os Meses':
+    #     df = df[df['data'].dt.strftime('%Y-%m') == filtro_mes]
 
-    if filtro_semana != 'Todas as Semanas':
-        df = df[df['data'].dt.strftime('%U-%Y') == filtro_semana]
+    # if filtro_semana != 'Todas as Semanas':
+    #     df = df[df['data'].dt.strftime('%U-%Y') == filtro_semana]
 
     # Cálculo de dias úteis e ausentes
     dias_uteis = df[df['quilometragem'] > 0].shape[0]
