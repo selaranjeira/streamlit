@@ -1,2 +1,2 @@
 -- SQLite
-SELECT * FROM running_data;
+SELECT count(*) FROM running_data where quilometragem = 0;
